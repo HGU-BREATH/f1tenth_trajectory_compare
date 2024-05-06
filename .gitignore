@@ -1,0 +1,3 @@
+*.csv
+~spec/*.csv
+.DS_Store
