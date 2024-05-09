@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import sys
 from scipy.interpolate import interp1d
+import os
 
-# 유클리드 거리 계산 함수
 def euclidean_distance(x1, y1, x2, y2):
     return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
@@ -11,7 +11,6 @@ def calculate_cumulative_distance(x, y):
     distances = np.sqrt(np.diff(x)**2 + np.diff(y)**2)
     return np.concatenate(([0], np.cumsum(distances)))
 
-# 랩 시작점을 찾는 함수
 def find_lap_starts(x, y, initial_point_index, min_distance=0.04, search_start_offset=300, search_range=500):
 
     lap_starts = [initial_point_index]
@@ -20,7 +19,7 @@ def find_lap_starts(x, y, initial_point_index, min_distance=0.04, search_start_o
     
     while True:
         
-        # t 지점 찾기
+        
         search_start = current_start + search_start_offset
         if search_start >= n:
             break
@@ -65,7 +64,7 @@ def resample_by_distance(x, y, num_points=2000):
 
 
 # 메인 실행 함수
-def main(input_file, output_file):
+def main(input_file):
     # CSV 파일 로드, 헤더 없다고 가정
     df = pd.read_csv(input_file, header=None)
     
@@ -109,22 +108,24 @@ def main(input_file, output_file):
     
     x_mean = np.append(x_mean, x_mean[0])
     y_mean = np.append(y_mean, y_mean[0])
-    # 새로운 DataFrame 생성
+    
+    output_dir = './trajectory/avg'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    output_file = os.path.join(output_dir, f"avg_{os.path.basename(input_file)}")
+
     df_mean = pd.DataFrame({'x': x_mean, 'y': y_mean})
     # 새로운 CSV 파일로 저장
     df_mean.to_csv(output_file, index=False)
-
-    print("Calculating is done!")
+    print(f"Average trajectory of {input_file} saved to {output_file}")
 
     return avg_laptime
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python calMeanOfAccumTrajectory.py input.csv output.csv")
+    if len(sys.argv) < 1:
+        print("Usage: python calMeanOfAccumTrajectory.py input.csv")
         sys.exit(1)
     
     input_file = sys.argv[1]
-    output_file = sys.argv[2]
 
-    main(input_file, output_file)
-    print("End of the script")
+    main(input_file)
