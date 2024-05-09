@@ -12,7 +12,7 @@ def calculate_cumulative_distance(x, y):
     return np.concatenate(([0], np.cumsum(distances)))
 
 # 랩 시작점을 찾는 함수
-def find_lap_starts(x, y, initial_point_index, min_distance=0.01, search_start_offset=300, search_range=500):
+def find_lap_starts(x, y, initial_point_index, min_distance=0.04, search_start_offset=300, search_range=500):
 
     lap_starts = [initial_point_index]
     current_start = initial_point_index
@@ -80,14 +80,18 @@ def main(input_file, output_file):
     # 랩 시작점 찾기
     lap_start_indices = find_lap_starts(x, y, initial_point_index)
     
+    lap_time = []
     # 각 랩의 데이터 출력
     for i, start_index in enumerate(lap_start_indices[:-1]):
         end_index = lap_start_indices[i + 1]
         print(f"Lap {i + 1}: Start at index {start_index}, End at index {end_index} | Time: {round(t[end_index]-t[start_index], 5)} | Number of index {end_index - start_index + 1} | Starting point accuracy {round(euclidean_distance(x[initial_point_index], y[initial_point_index], x[start_index], y[start_index]), 4)}")
-    
+        lap_time.append(round(t[end_index]-t[start_index], 5))
+
     resampled_x = []
     resampled_y = []
-    
+    avg_laptime = np.mean(lap_time)
+
+
     for i in range(len(lap_start_indices) - 1):
         start_idx = lap_start_indices[i]
         end_idx = lap_start_indices[i + 1]
@@ -103,19 +107,21 @@ def main(input_file, output_file):
     x_mean = np.mean(resampled_x, axis=0)
     y_mean = np.mean(resampled_y, axis=0)
     
+    x_mean = np.append(x_mean, x_mean[0])
+    y_mean = np.append(y_mean, y_mean[0])
     # 새로운 DataFrame 생성
-    df_mean = pd.DataFrame({'x_avg': x_mean, 'y_avg': y_mean})
+    df_mean = pd.DataFrame({'x': x_mean, 'y': y_mean})
     # 새로운 CSV 파일로 저장
     df_mean.to_csv(output_file, index=False)
 
     print("Calculating is done!")
 
+    return avg_laptime
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python calMeanOfAccumTrajectory.py input.csv output.csv")
         sys.exit(1)
-        
-    args = parser.parse_args()
     
     input_file = sys.argv[1]
     output_file = sys.argv[2]

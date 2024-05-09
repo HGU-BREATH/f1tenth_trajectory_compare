@@ -6,13 +6,16 @@ def main(file_path):
     # CSV 파일 로드
     data = np.genfromtxt(file_path, delimiter=',', skip_header=1)  # 헤더가 있다면 skip_header=1을 사용
 
-    if(data.shape[1] == 2):
-        x = data[:, 0]  # x 좌표는 첫 번째 열
-        y = data[:, 1]  # y 좌표는 두 번째 열
-    else:
-        x = data[:, 1] 
-        y = data[:, 2] 
+    # if(data.shape[1] == 2):
+    #     x = data[:, 0]  # x 좌표는 첫 번째 열
+    #     y = data[:, 1]  # y 좌표는 두 번째 열
+    # else:
+    #     x = data[:, 1] 
+    #     y = data[:, 2] 
 
+    x = data[:, 0]  # x 좌표는 첫 번째 열
+    y = data[:, 1]  # y 좌표는 두 번째 열
+    
     # 플롯 생성
     plt.figure(figsize=(10, 5))  # 그래프 크기 설정
     plt.plot(x, y, marker='o', linewidth=1, color='red', alpha=0.5)  # 선 그래프와 데이터 포인트에 마커 추가

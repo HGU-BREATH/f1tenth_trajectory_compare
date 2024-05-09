@@ -9,16 +9,16 @@ def main(file1, file2):
         x1 = data1[:, 0]  # x 좌표는 첫 번째 열
         y1 = data1[:, 1]  # y 좌표는 두 번째 열
     else:
-        x1 = data1[:, 1] 
-        y1 = data1[:, 2] 
+        x1 = data1[:, 0] 
+        y1 = data1[:, 1] 
 
     data2 = np.genfromtxt(file2, delimiter=',', skip_header=1)
     if(data2.shape[1] == 2):
         x2 = data2[:, 0]  # x 좌표는 첫 번째 열
         y2 = data2[:, 1]  # y 좌표는 두 번째 열
     else:
-        x2 = data2[:, 1] 
-        y2 = data2[:, 2] 
+        x2 = data2[:, 0] 
+        y2 = data2[:, 1] 
     
     
     # 플롯 생성
